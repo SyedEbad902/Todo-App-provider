@@ -7,6 +7,7 @@ class TaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.secondaryColor,
       floatingActionButton: const CustomFAB(),
       appBar: AppBar(
@@ -88,10 +89,13 @@ class CustomFAB extends StatelessWidget {
       shape: const CircleBorder(),
       backgroundColor: AppColors.primaryColor,
       onPressed: () {
+        double sh = MediaQuery.sizeOf(context).height;
+        double sw = MediaQuery.sizeOf(context).width;
+        final bottomInset = MediaQuery.of(context).viewInsets.bottom;
         showDialog(
             context: context,
             builder: (context) {
-              return const CustomDialog();
+              return CustomDialog(sh: sh, sw: sw, bottomInset: bottomInset);
             });
       },
       child: Icon(
@@ -106,27 +110,32 @@ class CustomFAB extends StatelessWidget {
 class CustomDialog extends StatelessWidget {
   const CustomDialog({
     super.key,
+    required this.sh,
+    required this.sw,
+    required this.bottomInset,
   });
+
+  final double sh;
+  final double sw;
+  final double bottomInset;
 
   @override
   Widget build(BuildContext context) {
-    double sh = MediaQuery.sizeOf(context).height;
-    double sw = MediaQuery.sizeOf(context).width;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return Dialog(
-        backgroundColor: AppColors.secondaryColor,
-        child: LayoutBuilder(builder: (context, constraints) {
-          return SizedBox(
-            height: sh * 0.55,
-            width: sw * 0.5,
-            child: Padding(
-              padding:
-                  // EdgeInsets.symmetric(horizontal: sw * 0.08, vertical: sh * 0.02),
-                  EdgeInsets.only(
-                      left: sw * 0.08,
-                      right: sw * 0.08,
-                      top: sh * 0.02,
-                      bottom: bottomInset),
+      backgroundColor: AppColors.secondaryColor,
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+      child: LayoutBuilder(builder: (context, constraints) {
+        return SizedBox(
+          height: sh * 0.55,
+          width: sw * 0.9,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: sw * 0.08,
+                right: sw * 0.08,
+                top: sh * 0.02,
+                bottom: bottomInset > 0 ? bottomInset : sh * 0.02),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: bottomInset),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -163,7 +172,7 @@ class CustomDialog extends StatelessWidget {
                     readOnly: true,
                     icon: Icons.calendar_month_outlined,
                     onTap: () {
-                      //TODO: add funct..
+                      // TODO: add function
                     },
                   ),
                   const SizedBox(
@@ -174,7 +183,7 @@ class CustomDialog extends StatelessWidget {
                     readOnly: true,
                     icon: Icons.timer,
                     onTap: () {
-                      //TODO: add funtc....
+                      // TODO: add function
                     },
                   ),
                   SizedBox(
@@ -190,12 +199,14 @@ class CustomDialog extends StatelessWidget {
                           "Create",
                           style: TextStyle(color: AppColors.primaryColor),
                         )),
-                  )
+                  ),
                 ],
               ),
             ),
-          );
-        }));
+          ),
+        );
+      }),
+    );
   }
 }
 
