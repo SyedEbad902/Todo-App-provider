@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_todo_app/provider_viewmodel/task_viewmodel.dart';
 import 'package:provider_todo_app/utils/colors.dart';
 
 import 'widges.dart';
@@ -8,6 +10,7 @@ class TaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.secondaryColor,
@@ -40,7 +43,8 @@ class TaskScreen extends StatelessWidget {
       ),
       body: ListView.separated(
           itemBuilder: (context, index) {
-            return const CustomListTile();
+            final showTask = taskProvider.tasks[index];
+            return CustomListTile(taskModel: showTask);
           },
           separatorBuilder: (context, index) {
             return Divider(
@@ -49,8 +53,7 @@ class TaskScreen extends StatelessWidget {
               color: AppColors.textColor,
             );
           },
-          itemCount: 5),
+          itemCount: taskProvider.tasks.length),
     );
   }
 }
-
