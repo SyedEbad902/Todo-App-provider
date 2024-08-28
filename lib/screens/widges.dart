@@ -7,16 +7,19 @@ import '../utils/colors.dart';
 
 //Custom List Tile
 class CustomListTile extends StatelessWidget {
+  final index;
   const CustomListTile({
     super.key,
     required this.taskModel,
+    this.index,
   });
   final TaskModel taskModel;
+
   @override
   Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-      
       title: Text(
         taskModel.taskName,
         style: TextStyle(
@@ -29,9 +32,18 @@ class CustomListTile extends StatelessWidget {
               color: AppColors.textColor,
               fontSize: 13,
               fontWeight: FontWeight.w300)),
+      trailing: IconButton(
+          onPressed: () {
+            taskProvider.Delete(index);
+          },
+          icon: Icon(
+            Icons.delete,
+            color: AppColors.primaryColor,
+          )),
     );
   }
 }
+
 //Custom Floating Button
 
 class CustomFAB extends StatelessWidget {
@@ -152,7 +164,6 @@ class CustomDialog extends StatelessWidget {
                     readOnly: true,
                     icon: Icons.timer,
                     onTap: () async {
-                      // TODO: add function
                       TimeOfDay? time = await showTimePicker(
                           context: context, initialTime: TimeOfDay.now());
                       taskProvider.setTime(time);
